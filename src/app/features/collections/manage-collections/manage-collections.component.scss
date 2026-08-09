@@ -1,0 +1,80 @@
+.page {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.create-form {
+  display: flex;
+  gap: 0.6rem;
+  margin: 1.5rem 0;
+
+  input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+}
+
+.status {
+  opacity: 0.7;
+  &.error { color: #c0392b; }
+}
+
+.collection-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.collection-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+
+  .name { font-weight: 600; }
+
+  .edit-input {
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+button {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #2c3e50;
+  color: white;
+
+  &.secondary { background: #ecf0f1; color: #2c3e50; }
+  &.danger { background: #c0392b; color: white; }
+}

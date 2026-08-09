@@ -19,6 +19,7 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+.editorconfig
 
 # Visual Studio Code
 .vscode/*
@@ -42,3 +43,8 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Supabase
+supabase/.branches
+supabase/.temp
+supabase/config.toml

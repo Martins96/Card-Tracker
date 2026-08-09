@@ -1,0 +1,50 @@
+<div class="page">
+  <a routerLink="/" class="back-link">&larr; Home</a>
+  <h2>Aggiungi carte</h2>
+
+  @if (loading()) {
+    <p class="status">Caricamento collezioni...</p>
+  } @else {
+    <form (ngSubmit)="onSubmit()" class="card-form">
+      <label>
+        Collezione esistente
+        <select [(ngModel)]="selectedCollectionId" name="collectionId">
+          @if (collections().length === 0) {
+            <option value="" disabled>Nessuna collezione ancora</option>
+          }
+          @for (c of collections(); track c.id) {
+            <option [value]="c.id">{{ c.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        ...oppure crea una nuova collezione
+        <input
+          type="text"
+          [(ngModel)]="newCollectionName"
+          name="newCollectionName"
+          placeholder="es. Calciatori 2025"
+        />
+      </label>
+
+      <label>
+        Quantità
+        <input
+          type="number"
+          [(ngModel)]="quantity"
+          name="quantity"
+          min="1"
+        />
+      </label>
+
+      <button type="submit" [disabled]="saving()">
+        {{ saving() ? 'Salvataggio...' : 'Aggiungi carta' }}
+      </button>
+
+      @if (message()) {
+        <p class="status">{{ message() }}</p>
+      }
+    </form>
+  }
+</div>

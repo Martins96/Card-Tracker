@@ -1,0 +1,49 @@
+<div class="page">
+  <a routerLink="/" class="back-link">&larr; Home</a>
+  <h2>Gestisci collezioni</h2>
+
+  <form (ngSubmit)="onCreate()" class="create-form">
+    <input
+      type="text"
+      [(ngModel)]="newName"
+      name="newName"
+      placeholder="Nome nuova collezione (es. Dragon Ball)"
+    />
+    <button type="submit">Crea</button>
+  </form>
+
+  @if (message()) {
+    <p class="status error">{{ message() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="status">Caricamento...</p>
+  } @else if (collections().length === 0) {
+    <p class="status">Nessuna collezione ancora.</p>
+  } @else {
+    <ul class="collection-list">
+      @for (collection of collections(); track collection.id) {
+        <li class="collection-item">
+          @if (editingId() === collection.id) {
+            <input
+              type="text"
+              [(ngModel)]="editingName"
+              name="editingName"
+              class="edit-input"
+            />
+            <div class="actions">
+              <button type="button" (click)="confirmEdit()">Salva</button>
+              <button type="button" class="secondary" (click)="cancelEdit()">Annulla</button>
+            </div>
+          } @else {
+            <span class="name">{{ collection.name }}</span>
+            <div class="actions">
+              <button type="button" class="secondary" (click)="startEdit(collection)">Rinomina</button>
+              <button type="button" class="danger" (click)="onDelete(collection)">Elimina</button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>

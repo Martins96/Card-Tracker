@@ -2,7 +2,16 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
 
+## Project information
+
+Card Tracker is a site where you can store the information about your card collections.
+
+You can run this application on a HTTP server and connect it to a Supabase Cloud service for storage the information.
+
+
 ## Development server
+
+#### Start HTTP server
 
 To start a local development server, run:
 
@@ -12,18 +21,30 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-## Code scaffolding
+#### Start Supabase
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+The project use Supabase as Database and file bucket for storage information.
+
+To start locally the Supabase use (Required a Container Engine):
+
+For first use:
 
 ```bash
-ng generate component component-name
+supabase init
+supabase start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Make sure the SQL script are present inside migrations folder with timestamp format, for example:
+20260809120000_db-schema.sql.
 
 ```bash
-ng generate --help
+supabase db reset
+```
+
+For next startup you can just type:
+
+```bash
+supabase start
 ```
 
 ## Building
@@ -35,24 +56,6 @@ ng build
 ```
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
 ## Additional Resources
 
