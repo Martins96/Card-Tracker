@@ -11,8 +11,11 @@
   } @else {
     <ul class="collection-list">
       @for (collection of collections(); track collection.id) {
-        <li class="collection-item">
-          <span class="name">{{ collection.name }}</span>
+        <li>
+          <a [routerLink]="['/collections', collection.id]" class="collection-item">
+            <span class="name">{{ collection.name }}</span>
+            <span class="arrow">&rarr;</span>
+          </a>
         </li>
       }
     </ul>

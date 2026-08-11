@@ -1,0 +1,49 @@
+<div class="page">
+  <a routerLink="/collections" class="back-link">&larr; Collezioni</a>
+
+  @if (loading()) {
+    <p class="status">Caricamento...</p>
+  } @else if (error()) {
+    <p class="status error">{{ error() }}</p>
+  } @else {
+    <h2>{{ collectionName() }}</h2>
+    <p class="summary">
+      {{ cards().length }} cart{{ cards().length === 1 ? 'a' : 'e' }} &middot;
+      {{ totalQuantity() }} pezz{{ totalQuantity() === 1 ? 'o' : 'i' }} totali
+    </p>
+
+    @if (cards().length === 0) {
+      <p class="status">Nessuna carta ancora in questa collezione.</p>
+    } @else {
+      <div class="cards-grid">
+        @for (card of cardsWithImages(); track card.id) {
+          <div class="card-tile" [class.zero]="card.quantity === 0" (click)="openEdit(card)">
+            <img [src]="card.imageUrl" alt="Carta" loading="lazy" />
+            <span class="quantity-badge">{{ card.quantity }}</span>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  @if (editingCard(); as card) {
+    <div class="edit-overlay" (click)="closeEdit()">
+      <div class="edit-modal" (click)="$event.stopPropagation()">
+        <img [src]="card.imageUrl" alt="Carta" class="edit-preview" />
+
+        <div class="quantity-editor">
+          <button type="button" (click)="decrementEdit()">&minus;</button>
+          <input type="number" [(ngModel)]="editingQuantity" min="0" />
+          <button type="button" (click)="incrementEdit()">&plus;</button>
+        </div>
+
+        <div class="edit-actions">
+          <button type="button" class="secondary" (click)="closeEdit()">Annulla</button>
+          <button type="button" (click)="saveEdit()" [disabled]="savingQuantity()">
+            {{ savingQuantity() ? 'Salvataggio...' : 'Salva' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

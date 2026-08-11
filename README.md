@@ -46,6 +46,14 @@ For next startup you can just type:
 ```bash
 supabase start
 ```
+**After DB creation, you need to create the storage bucket on local**
+
+Using console, (for local address use: http://localhost:54323) you can create a storage bucket in this way:
+1. From lateral menu, select **Storage**
+2. Select button **New bucket**
+3. Set name `card-images`
+4. Select public bucket
+5. Click on OK to create the bucket
 
 ## Building
 

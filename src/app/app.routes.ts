@@ -13,6 +13,12 @@ export const routes: Routes = [
         .then(m => m.CollectionsListComponent),
   },
   {
+  path: 'collections/:id',
+    loadComponent: () =>
+      import('./features/collections/collection-detail/collection-detail.component')
+        .then(m => m.CollectionDetailComponent),
+  },
+  {
     path: 'add-card',
     loadComponent: () =>
       import('./features/card-add/card-add.component')

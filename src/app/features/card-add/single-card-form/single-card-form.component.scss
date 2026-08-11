@@ -1,0 +1,63 @@
+.form-section {
+  display: flex;
+  flex-direction: column;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.checkbox-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+input, select {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+
+  &:disabled { opacity: 0.5; }
+}
+
+.cropper-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hint {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  font-weight: normal;
+}
+
+button {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: none;
+  background: #2c3e50;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled { opacity: 0.5; cursor: default; }
+}
+
+.status {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  &.error { color: #c0392b; }
+}

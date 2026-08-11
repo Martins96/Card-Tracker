@@ -15,12 +15,12 @@ export class CardImagesService {
     return data.publicUrl;
   }
 
-  async upload(cardId: string, file: File): Promise<void> {
+  async upload(cardId: string, file: Blob): Promise<void> {
     const { error } = await this.supabase.storage
       .from(BUCKET)
       .upload(`${cardId}.jpg`, file, {
-        contentType: file.type,
-        upsert: true, // sovrascrive se già esiste (utile per correzioni)
+        contentType: 'image/jpeg',
+        upsert: true,
       });
 
     if (error) throw error;

@@ -1,0 +1,77 @@
+<div class="form-section">
+  @if (loading()) {
+    <p class="status">Caricamento collezioni...</p>
+  } @else {
+    <div class="setup">
+      <label>
+        Collezione *
+        <select [(ngModel)]="selectedCollectionId" name="bulkCollectionId" required>
+          @if (collections().length === 0) {
+            <option value="" disabled>Nessuna collezione — creane una prima</option>
+          }
+          @for (c of collections(); track c.id) {
+            <option [value]="c.id">{{ c.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Immagine foglio *
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+      </label>
+
+      @if (loadedImage(); as img) {
+        <div class="cropper-wrap">
+          <p class="hint">Ritaglia l'area del foglio da tagliare in griglia</p>
+          <app-image-cropper [image]="img" (cropChange)="onCropChange($event)" />
+        </div>
+
+        <div class="grid-config">
+          <label>
+            Righe
+            <input type="number" [(ngModel)]="rows" name="rows" min="1" max="20" />
+          </label>
+          <label>
+            Colonne
+            <input type="number" [(ngModel)]="cols" name="cols" min="1" max="20" />
+          </label>
+          <button type="button" (click)="generateGrid()" [disabled]="generatingGrid()">
+            {{ generatingGrid() ? 'Taglio in corso...' : 'Genera griglia (' + totalCells() + ' celle)' }}
+          </button>
+        </div>
+      }
+    </div>
+
+    @if (gridCells().length > 0) {
+      <div class="grid-preview">
+        <p class="hint">Imposta la quantità per ogni carta (0 = non la possiedo, verrà salvata comunque)</p>
+        <div class="cells" [style.grid-template-columns]="'repeat(' + cols() + ', 1fr)'">
+          @for (cell of gridCells(); track cell.index) {
+            <div class="cell">
+              <img [src]="cell.previewUrl" alt="Carta {{ cell.index + 1 }}" />
+              <input
+                type="number"
+                [ngModel]="cell.quantity"
+                (ngModelChange)="updateCellQuantity(cell.index, $event)"
+                name="qty-{{ cell.index }}"
+                min="0"
+              />
+            </div>
+          }
+        </div>
+      </div>
+
+      <button type="button" class="submit-btn" (click)="onSubmit()" [disabled]="saving()">
+        @if (saveProgress(); as p) {
+          Salvataggio {{ p.done }}/{{ p.total }}...
+        } @else {
+          Salva {{ gridCells().length }} carte
+        }
+      </button>
+    }
+
+    @if (message()) {
+      <p class="status" [class.error]="isError()">{{ message() }}</p>
+    }
+  }
+</div>

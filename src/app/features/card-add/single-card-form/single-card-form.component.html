@@ -1,0 +1,61 @@
+<div class="form-section">
+  @if (loading()) {
+    <p class="status">Caricamento collezioni...</p>
+  } @else {
+    <form (ngSubmit)="onSubmit()">
+      <label>
+        Collezione *
+        <select [(ngModel)]="selectedCollectionId" name="collectionId" required>
+          @if (collections().length === 0) {
+            <option value="" disabled>Nessuna collezione — creane una prima</option>
+          }
+          @for (c of collections(); track c.id) {
+            <option [value]="c.id">{{ c.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="checkbox-row">
+        <input
+          type="checkbox"
+          [ngModel]="notOwned()"
+          (ngModelChange)="onNotOwnedChange($event)"
+          name="notOwned"
+        />
+        Non la possiedo
+      </label>
+
+      <label>
+        Quantità posseduta *
+        <input
+          type="number"
+          [(ngModel)]="quantity"
+          name="quantity"
+          min="0"
+          [disabled]="notOwned()"
+          required
+        />
+      </label>
+
+      <label>
+        Immagine carta *
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" required />
+      </label>
+
+      @if (loadedImage(); as img) {
+        <div class="cropper-wrap">
+          <p class="hint">Trascina per spostare, angoli per ridimensionare</p>
+          <app-image-cropper [image]="img" (cropChange)="onCropChange($event)" />
+        </div>
+      }
+
+      <button type="submit" [disabled]="saving() || !isValid">
+        {{ saving() ? 'Salvataggio...' : 'Aggiungi carta' }}
+      </button>
+
+      @if (message()) {
+        <p class="status" [class.error]="isError()">{{ message() }}</p>
+      }
+    </form>
+  }
+</div>
