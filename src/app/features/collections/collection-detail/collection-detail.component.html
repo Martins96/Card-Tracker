@@ -1,5 +1,5 @@
 <div class="page">
-  <a routerLink="/collections" class="back-link">&larr; Collezioni</a>
+  <a routerLink="/collections" class="back-link">← Collezioni</a>
 
   @if (loading()) {
     <p class="status">Caricamento...</p>
@@ -8,21 +8,49 @@
   } @else {
     <h2>{{ collectionName() }}</h2>
     <p class="summary">
-      {{ cards().length }} cart{{ cards().length === 1 ? 'a' : 'e' }} &middot;
+      {{ cards().length }} cart{{ cards().length === 1 ? 'a' : 'e' }} ·
       {{ totalQuantity() }} pezz{{ totalQuantity() === 1 ? 'o' : 'i' }} totali
     </p>
 
     @if (cards().length === 0) {
       <p class="status">Nessuna carta ancora in questa collezione.</p>
     } @else {
-      <div class="cards-grid">
-        @for (card of cardsWithImages(); track card.id) {
-          <div class="card-tile" [class.zero]="card.quantity === 0" (click)="openEdit(card)">
-            <img [src]="card.imageUrl" alt="Carta" loading="lazy" />
-            <span class="quantity-badge">{{ card.quantity }}</span>
-          </div>
-        }
+      <div class="filter-bar">
+        <button type="button" class="filter-chip" [class.active]="ownershipFilter() === 'ALL'" (click)="setOwnershipFilter('ALL')">
+          Tutte
+        </button>
+        <button type="button" class="filter-chip" [class.active]="ownershipFilter() === 'OWNED'" (click)="setOwnershipFilter('OWNED')">
+          Possedute
+        </button>
+        <button type="button" class="filter-chip" [class.active]="ownershipFilter() === 'NOT_OWNED'" (click)="setOwnershipFilter('NOT_OWNED')">
+          Non possedute
+        </button>
+        <button type="button" class="filter-chip" [class.active]="ownershipFilter() === 'TRADEABLE'" (click)="setOwnershipFilter('TRADEABLE')">
+          Scambiabili
+        </button>
       </div>
+
+      @if (filteredCards().length === 0) {
+        <p class="status">Nessuna carta per questo filtro.</p>
+      } @else {
+        <div class="cards-grid">
+          @for (card of filteredCards(); track card.id) {
+            <div class="card-tile" [class.zero]="card.quantity === 0" (click)="openEdit(card)">
+              <div class="img-wrapper">
+                <img
+                  [src]="card.imageUrl"
+                  alt="Carta"
+                  loading="lazy"
+                  (load)="onImgLoad($event)"
+                  (error)="onImgError($event)"
+                  class="loading"
+                />
+              </div>
+              <span class="quantity-badge">{{ card.quantity }}</span>
+            </div>
+          }
+        </div>
+      }
     }
   }
 
@@ -32,17 +60,32 @@
         <img [src]="card.imageUrl" alt="Carta" class="edit-preview" />
 
         <div class="quantity-editor">
-          <button type="button" (click)="decrementEdit()">&minus;</button>
+          <button type="button" class="qty-btn minus" (click)="decrementEdit()">−</button>
           <input type="number" [(ngModel)]="editingQuantity" min="0" />
-          <button type="button" (click)="incrementEdit()">&plus;</button>
+          <button type="button" class="qty-btn plus" (click)="incrementEdit()">+</button>
         </div>
 
-        <div class="edit-actions">
-          <button type="button" class="secondary" (click)="closeEdit()">Annulla</button>
-          <button type="button" (click)="saveEdit()" [disabled]="savingQuantity()">
-            {{ savingQuantity() ? 'Salvataggio...' : 'Salva' }}
-          </button>
-        </div>
+        @if (confirmDelete()) {
+          <div class="delete-confirm">
+            <p>Eliminare questa carta dalla collezione? Azione irreversibile.</p>
+            <div class="edit-actions">
+              <button type="button" class="secondary" (click)="cancelDelete()" [disabled]="deletingCard()">
+                Annulla
+              </button>
+              <button type="button" class="danger" (click)="deleteCard()" [disabled]="deletingCard()">
+                {{ deletingCard() ? 'Eliminazione...' : 'Conferma eliminazione' }}
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="edit-actions">
+            <button type="button" class="danger-outline" (click)="askDelete()">Elimina</button>
+            <button type="button" class="secondary" (click)="closeEdit()">Annulla</button>
+            <button type="button" class="primary" (click)="saveEdit()" [disabled]="savingQuantity()">
+              {{ savingQuantity() ? 'Salvataggio...' : 'Salva' }}
+            </button>
+          </div>
+        }
       </div>
     </div>
   }

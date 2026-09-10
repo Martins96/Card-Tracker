@@ -15,9 +15,20 @@
         </select>
       </label>
 
-      <label>
+      <label class="file-label">
         Immagine foglio *
-        <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+        <input
+          #sheetInput
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          class="visually-hidden"
+        />
+        <div class="dropzone" (click)="sheetInput.click()">
+          <span class="dropzone-icon">↑</span>
+          <span class="dropzone-title">Scatta o carica il foglio</span>
+          <span class="dropzone-hint">Tutte le carte in una sola foto</span>
+        </div>
       </label>
 
       @if (loadedImage(); as img) {
@@ -36,18 +47,20 @@
             <input type="number" [(ngModel)]="cols" name="cols" min="1" max="20" />
           </label>
           <button type="button" (click)="generateGrid()" [disabled]="generatingGrid()">
-            {{ generatingGrid() ? 'Taglio in corso...' : 'Genera griglia (' + totalCells() + ' celle)' }}
+            {{ generatingGrid() ? 'Taglio in corso...' : 'Genera griglia (' + totalCells() + ')' }}
           </button>
         </div>
       }
     </div>
 
     @if (gridCells().length > 0) {
+      <div class="divider"></div>
+
       <div class="grid-preview">
         <p class="hint">Imposta la quantità per ogni carta (0 = non la possiedo, verrà salvata comunque)</p>
-        <div class="cells" [style.grid-template-columns]="'repeat(' + cols() + ', 1fr)'">
+        <div class="cells">
           @for (cell of gridCells(); track cell.index) {
-            <div class="cell">
+            <div class="cell" [class.zero]="cell.quantity === 0">
               <img [src]="cell.previewUrl" alt="Carta {{ cell.index + 1 }}" />
               <input
                 type="number"

@@ -1,0 +1,95 @@
+// ============================================
+// Card Tracker — Variabili tema dark
+// Importa in ogni component con:
+// @use 'variables' as *;
+// (in base alla struttura cartelle, aggiusta il path relativo)
+// ============================================
+
+// --- Colori base superfici ---
+$bg-page-start:     #16161f;
+$bg-page-end:        #0a0a0f;
+$bg-card:            #15151d;
+$bg-input:           #18181f;
+$bg-input-dark:      #0a0a0f;
+$bg-elevated:        #12121a;
+
+// --- Bordi ---
+$border-default:     #24242e;
+$border-input:       #2a2a35;
+$border-strong:      #3f3f4a;
+$border-hover:       #34343f;
+$border-divider:     #1e1e28;
+
+// --- Testo ---
+$text-primary:       #f4f4f5;
+$text-secondary:     #d4d4d8;
+$text-muted:         #a1a1aa;
+$text-hint:          #71717a;
+$text-faint:         #52525b;
+$text-placeholder:   #6b6b76;
+
+// --- Accent (viola → blu, colore principale del brand) ---
+$accent-purple:       #7c3aed;
+$accent-purple-light: #a78bfa;
+$accent-blue:         #2563eb;
+$accent-cyan:         #06b6d4;
+$accent-gradient:     linear-gradient(135deg, #{$accent-purple}, #{$accent-blue});
+
+// --- Stati semantici ---
+$color-success:       #10b981;
+$color-success-light: #4ade80;
+$color-danger:         #ef4444;
+$color-danger-light:   #f87171;
+$color-danger-bg:      rgba(239, 68, 68, 0.15);
+$color-danger-border:  rgba(239, 68, 68, 0.3);
+
+// --- Superfici con tint viola (righe attive, focus, editing) ---
+$accent-bg-soft:      rgba(124, 58, 237, 0.1);
+$accent-bg-softer:    rgba(124, 58, 237, 0.15);
+$accent-border-soft:  rgba(124, 58, 237, 0.3);
+$accent-border-mid:   rgba(124, 58, 237, 0.4);
+$accent-shadow:       rgba(124, 58, 237, 0.35);
+$accent-shadow-strong: rgba(124, 58, 237, 0.4);
+
+// --- Badge quantità carte ---
+$badge-zero-bg:       #3f3f4a;
+$badge-zero-text:     #d4d4d8;
+
+// --- Raggi angoli ---
+$radius-sm:  8px;
+$radius-md:  10px;
+$radius-lg:  12px;
+$radius-xl:  14px;
+$radius-2xl: 16px;
+$radius-pill: 20px;
+
+// --- Ombre ---
+$shadow-accent-btn:    0 4px 14px #{$accent-shadow};
+$shadow-accent-btn-lg: 0 6px 18px #{$accent-shadow-strong};
+$shadow-card-hover:    0 10px 24px rgba(0, 0, 0, 0.35);
+$shadow-modal:         0 2px 8px rgba(0, 0, 0, 0.4);
+
+// --- Sfondo pagina standard, riusabile via mixin ---
+@mixin page-background {
+  background: radial-gradient(circle at top, $bg-page-start 0%, $bg-page-end 60%);
+}
+
+// --- Animazioni condivise ---
+@mixin fade-in($duration: 0.4s) {
+  animation: fadeIn $duration ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

@@ -1,7 +1,11 @@
--- Tabella collezioni (Calciatori, Pokemon, ecc.)
+-- Crea l'enum
+create type collection_type as enum ('CARTE', 'CHIBI');
+
+-- Tabella collezioni (Pokemon, Yu-gi-oh, ecc.)
 create table collections (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
+  type collection_type not null default 'CARTE',
   created_at timestamptz not null default now()
 );
 

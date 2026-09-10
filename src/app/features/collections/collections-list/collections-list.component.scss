@@ -1,25 +1,141 @@
+@use '../../../style/variables.scss' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, $bg-page-start 0%, $bg-page-end 60%);
+}
+
+.page {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.back-link {
+  display: inline-flex;
+  text-decoration: none;
+  color: $text-muted;
+  font-size: 0.85rem;
+  transition: color 0.15s;
+
+  &:hover { color: $text-primary; }
+}
+
+h2 {
+  color: $text-primary;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 1rem 0 1.25rem;
+}
+
+.status {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  &.error { color: #f87171; }
+}
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid $border-default;
+  background: transparent;
+  color: $text-secondary;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.15s, background 0.15s, color 0.15s;
+
+  &:active { transform: scale(0.96); }
+
+  &.active {
+    background: linear-gradient(135deg, $accent-purple, $accent-blue);
+    color: white;
+    border-color: transparent;
+  }
+}
+
 .collection-list {
   list-style: none;
   padding: 0;
-  margin: 1.5rem 0 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 10px;
 }
 
 .collection-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.9rem 1.1rem;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  font-weight: 600;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #15151d;
+  border: 1px solid #24242e;
+  border-radius: 14px;
   text-decoration: none;
-  color: inherit;
-  transition: background 0.15s;
+  transition: transform 0.12s, border-color 0.15s, background 0.15s;
 
-  &:hover { background: #f7f7f7; }
+  &:active { transform: scale(0.98); }
 
-  .arrow { opacity: 0.4; }
+  @media (hover: hover) {
+    &:hover {
+      background: #1a1a24;
+      border-color: #34343f;
+    }
+  }
+
+  .badge {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .name {
+    flex: 1;
+    color: $text-primary;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .type-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    white-space: nowrap;
+
+    &.gioco {
+      background: rgba(124, 58, 237, 0.15);
+      color: #a78bfa;
+      border-color: rgba(124, 58, 237, 0.3);
+    }
+  }
+
+  .arrow {
+    color: $text-faint;
+    font-size: 1.1rem;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

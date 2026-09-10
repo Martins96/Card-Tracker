@@ -95,7 +95,7 @@ export class BulkCardFormComponent {
         index,
         previewUrl: URL.createObjectURL(blob),
         blob,
-        quantity: 1,
+        quantity: 0,
       }));
       this.gridCells.set(cells);
     } catch (err) {

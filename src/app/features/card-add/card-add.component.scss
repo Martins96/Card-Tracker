@@ -1,37 +1,69 @@
+@use '../../style/variables.scss' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, $bg-page-start 0%, $bg-page-end 60%);
+}
+
 .page {
   max-width: 600px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 1.25rem;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .back-link {
-  display: inline-block;
-  margin-bottom: 1rem;
+  display: inline-flex;
   text-decoration: none;
-  color: inherit;
-  opacity: 0.7;
+  color: #a1a1aa;
+  font-size: 0.85rem;
+  transition: color 0.15s;
+
+  &:hover { color: #f4f4f5; }
+}
+
+h2 {
+  color: #f4f4f5;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 1rem 0 1.25rem;
 }
 
 .tabs {
   display: flex;
-  gap: 0.5rem;
-  margin: 1.5rem 0;
-  border-bottom: 2px solid #eee;
+  gap: 6px;
+  background: #15151d;
+  border: 1px solid #24242e;
+  border-radius: 14px;
+  padding: 5px;
+  margin-bottom: 1.5rem;
+
+  button {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: #9ca3af;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+
+    &.active {
+      background: linear-gradient(135deg, $accent-purple, $accent-blue);
+      color: white;
+      box-shadow: 0 3px 10px rgba(124, 58, 237, 0.35);
+    }
+
+    &:not(.active):active {
+      background: $border-divider;
+    }
+  }
 }
 
-.tabs button {
-  padding: 0.7rem 1.2rem;
-  border: none;
-  background: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  opacity: 0.5;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-
-  &.active {
-    opacity: 1;
-    border-bottom-color: #2c3e50;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

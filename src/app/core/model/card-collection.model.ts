@@ -1,6 +1,12 @@
+export enum CollectionType {
+  CARTE = 'CARTE',
+  CHIBI = 'CHIBI',
+}
+
 export interface CardCollection {
   id: string;
   name: string;
+  type: CollectionType;
   cardCount?: number;
 }
 

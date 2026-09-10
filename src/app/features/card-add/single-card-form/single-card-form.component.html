@@ -21,7 +21,9 @@
           [ngModel]="notOwned()"
           (ngModelChange)="onNotOwnedChange($event)"
           name="notOwned"
+          class="visually-hidden"
         />
+        <span class="checkbox-box"></span>
         Non la possiedo
       </label>
 
@@ -37,9 +39,21 @@
         />
       </label>
 
-      <label>
+      <label class="file-label">
         Immagine carta *
-        <input type="file" accept="image/*" (change)="onFileSelected($event)" required />
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          required
+          class="visually-hidden"
+        />
+        <div class="dropzone" (click)="fileInput.click()">
+          <span class="dropzone-icon">↑</span>
+          <span class="dropzone-title">Scatta o carica una foto</span>
+          <span class="dropzone-hint">JPG, PNG fino a 10MB</span>
+        </div>
       </label>
 
       @if (loadedImage(); as img) {

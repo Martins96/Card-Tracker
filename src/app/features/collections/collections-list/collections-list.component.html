@@ -1,5 +1,5 @@
 <div class="page">
-  <a routerLink="/" class="back-link">&larr; Home</a>
+  <a routerLink="/" class="back-link">← Home</a>
   <h2>Le mie collezioni</h2>
 
   @if (loading()) {
@@ -9,15 +9,37 @@
   } @else if (collections().length === 0) {
     <p class="status">Nessuna collezione ancora. Aggiungine una da "Aggiungi carte".</p>
   } @else {
-    <ul class="collection-list">
-      @for (collection of collections(); track collection.id) {
-        <li>
-          <a [routerLink]="['/collections', collection.id]" class="collection-item">
-            <span class="name">{{ collection.name }}</span>
-            <span class="arrow">&rarr;</span>
-          </a>
-        </li>
-      }
-    </ul>
+    <div class="filter-bar">
+      <button type="button" class="filter-chip" [class.active]="typeFilter() === 'ALL'" (click)="setTypeFilter('ALL')">
+        Tutte
+      </button>
+      <button type="button" class="filter-chip" [class.active]="typeFilter() === CollectionType.CARTE" (click)="setTypeFilter(CollectionType.CARTE)">
+        Carte
+      </button>
+      <button type="button" class="filter-chip" [class.active]="typeFilter() === CollectionType.CHIBI" (click)="setTypeFilter(CollectionType.CHIBI)">
+        Chibi
+      </button>
+    </div>
+
+    @if (filteredCollections().length === 0) {
+      <p class="status">Nessuna collezione di questo tipo.</p>
+    } @else {
+      <ul class="collection-list">
+        @for (collection of filteredCollections(); track collection.id) {
+          <li>
+            <a [routerLink]="['/collections', collection.id]" class="collection-item">
+              <span class="badge" [style.background]="badgeGradient(collection.name)">
+                {{ initials(collection.name) }}
+              </span>
+              <span class="name">{{ collection.name }}</span>
+              <span class="type-tag" [class.gioco]="collection.type === CollectionType.CARTE">
+                {{ typeLabel(collection.type) }}
+              </span>
+              <span class="arrow">→</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
   }
 </div>

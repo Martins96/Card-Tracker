@@ -1,5 +1,5 @@
 <div class="page">
-  <a routerLink="/" class="back-link">&larr; Home</a>
+  <a routerLink="/" class="back-link">← Home</a>
   <h2>Gestisci collezioni</h2>
 
   <form (ngSubmit)="onCreate()" class="create-form">
@@ -7,8 +7,13 @@
       type="text"
       [(ngModel)]="newName"
       name="newName"
-      placeholder="Nome nuova collezione (es. Dragon Ball)"
+      placeholder="Nome nuova collezione (es. Melting Point Summer 2026)"
     />
+    <select [(ngModel)]="newType" name="newType">
+      @for (t of collectionTypes; track t) {
+        <option [value]="t">{{ typeLabel(t) }}</option>
+      }
+    </select>
     <button type="submit">Crea</button>
   </form>
 
@@ -23,7 +28,7 @@
   } @else {
     <ul class="collection-list">
       @for (collection of collections(); track collection.id) {
-        <li class="collection-item">
+        <li class="collection-item" [class.editing]="editingId() === collection.id">
           @if (editingId() === collection.id) {
             <input
               type="text"
@@ -32,11 +37,14 @@
               class="edit-input"
             />
             <div class="actions">
-              <button type="button" (click)="confirmEdit()">Salva</button>
+              <button type="button" class="confirm" (click)="confirmEdit()">Salva</button>
               <button type="button" class="secondary" (click)="cancelEdit()">Annulla</button>
             </div>
           } @else {
             <span class="name">{{ collection.name }}</span>
+            <span class="type-tag" [class.gioco]="collection.type === CollectionType.CARTE">
+              {{ typeLabel(collection.type) }}
+            </span>
             <div class="actions">
               <button type="button" class="secondary" (click)="startEdit(collection)">Rinomina</button>
               <button type="button" class="danger" (click)="onDelete(collection)">Elimina</button>

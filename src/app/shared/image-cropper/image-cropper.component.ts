@@ -19,7 +19,6 @@ export class ImageCropperComponent implements AfterViewInit, OnChanges {
   private ctx!: CanvasRenderingContext2D;
   private displayScale = 1;
 
-  // Rettangolo di crop in coordinate IMMAGINE ORIGINALE (non canvas display)
   private rect: CropRect = { x: 0, y: 0, width: 0, height: 0 };
 
   private dragMode: 'move' | 'resize' | null = null;
@@ -27,8 +26,18 @@ export class ImageCropperComponent implements AfterViewInit, OnChanges {
   private rectStart: CropRect = { x: 0, y: 0, width: 0, height: 0 };
   private resizeHandle: 'tl' | 'tr' | 'bl' | 'br' | null = null;
 
+  // dimensione VISIVA del quadratino disegnato
   private readonly HANDLE_SIZE = 10;
+  // raggio di tolleranza per il tocco: più largo del quadratino visivo,
+  // così su mobile non serve centrare il dito al pixel
+  private readonly HANDLE_HIT_RADIUS = 22;
   private readonly MAX_CANVAS_WIDTH = 500;
+
+  // palette coerente col tema dark/viola dell'app
+  private readonly COLOR_OVERLAY = 'rgba(10, 10, 15, 0.65)';
+  private readonly COLOR_BORDER = '#7c3aed';
+  private readonly COLOR_HANDLE_FILL = '#7c3aed';
+  private readonly COLOR_HANDLE_STROKE = '#f4f4f5';
 
   ngAfterViewInit() {
     this.setup();
@@ -48,7 +57,6 @@ export class ImageCropperComponent implements AfterViewInit, OnChanges {
     canvas.width = this.image.width * this.displayScale;
     canvas.height = this.image.height * this.displayScale;
 
-    // Rettangolo iniziale: 80% centrato dell'immagine originale
     const w = this.image.width * 0.8;
     const h = this.image.height * 0.8;
     this.rect = {
@@ -78,32 +86,33 @@ export class ImageCropperComponent implements AfterViewInit, OnChanges {
 
     const d = this.toDisplay(this.rect);
 
-    // Overlay scuro fuori dall'area di crop
-    this.ctx.fillStyle = 'rgba(0,0,0,0.5)';
-    this.ctx.fillRect(0, 0, canvas.width, d.y); // sopra
-    this.ctx.fillRect(0, d.y + d.height, canvas.width, canvas.height - d.y - d.height); // sotto
-    this.ctx.fillRect(0, d.y, d.x, d.height); // sinistra
-    this.ctx.fillRect(d.x + d.width, d.y, canvas.width - d.x - d.width, d.height); // destra
+    this.ctx.fillStyle = this.COLOR_OVERLAY;
+    this.ctx.fillRect(0, 0, canvas.width, d.y);
+    this.ctx.fillRect(0, d.y + d.height, canvas.width, canvas.height - d.y - d.height);
+    this.ctx.fillRect(0, d.y, d.x, d.height);
+    this.ctx.fillRect(d.x + d.width, d.y, canvas.width - d.x - d.width, d.height);
 
-    // Bordo area selezionata
-    this.ctx.strokeStyle = '#ffffff';
+    this.ctx.strokeStyle = this.COLOR_BORDER;
     this.ctx.lineWidth = 2;
     this.ctx.strokeRect(d.x, d.y, d.width, d.height);
 
-    // Handle agli angoli
-    this.ctx.fillStyle = '#ffffff';
     const hs = this.HANDLE_SIZE;
     const corners = [
       [d.x, d.y], [d.x + d.width, d.y],
       [d.x, d.y + d.height], [d.x + d.width, d.y + d.height],
     ];
     for (const [cx, cy] of corners) {
-      this.ctx.fillRect(cx - hs / 2, cy - hs / 2, hs, hs);
+      this.ctx.beginPath();
+      this.ctx.arc(cx, cy, hs / 2, 0, Math.PI * 2);
+      this.ctx.fillStyle = this.COLOR_HANDLE_FILL;
+      this.ctx.fill();
+      this.ctx.lineWidth = 2;
+      this.ctx.strokeStyle = this.COLOR_HANDLE_STROKE;
+      this.ctx.stroke();
     }
   }
 
   private emitCrop() {
-    // Coordinate arrotondate in spazio immagine originale
     this.cropChange.emit({
       x: Math.round(this.rect.x),
       y: Math.round(this.rect.y),
@@ -112,20 +121,29 @@ export class ImageCropperComponent implements AfterViewInit, OnChanges {
     });
   }
 
-  private getMousePos(event: MouseEvent): { x: number; y: number } {
+  // legge coordinate sia da MouseEvent che da TouchEvent
+  private getPointerPos(event: MouseEvent | TouchEvent): { x: number; y: number } {
     const canvas = this.canvasRef.nativeElement;
     const bounds = canvas.getBoundingClientRect();
+
+    const clientX = 'touches' in event
+      ? (event.touches[0] ?? event.changedTouches[0]).clientX
+      : event.clientX;
+    const clientY = 'touches' in event
+      ? (event.touches[0] ?? event.changedTouches[0]).clientY
+      : event.clientY;
+
     return {
-      x: (event.clientX - bounds.left) * (canvas.width / bounds.width),
-      y: (event.clientY - bounds.top) * (canvas.height / bounds.height),
+      x: (clientX - bounds.left) * (canvas.width / bounds.width),
+      y: (clientY - bounds.top) * (canvas.height / bounds.height),
     };
   }
 
   private hitTestHandle(pos: { x: number; y: number }): 'tl' | 'tr' | 'bl' | 'br' | null {
     const d = this.toDisplay(this.rect);
-    const hs = this.HANDLE_SIZE;
+    const r = this.HANDLE_HIT_RADIUS;
     const near = (px: number, py: number) =>
-      Math.abs(pos.x - px) <= hs && Math.abs(pos.y - py) <= hs;
+      Math.abs(pos.x - px) <= r && Math.abs(pos.y - py) <= r;
 
     if (near(d.x, d.y)) return 'tl';
     if (near(d.x + d.width, d.y)) return 'tr';
@@ -139,8 +157,10 @@ export class ImageCropperComponent implements AfterViewInit, OnChanges {
     return pos.x >= d.x && pos.x <= d.x + d.width && pos.y >= d.y && pos.y <= d.y + d.height;
   }
 
-  onMouseDown(event: MouseEvent) {
-    const pos = this.getMousePos(event);
+  onPointerDown(event: MouseEvent | TouchEvent) {
+    if ('touches' in event) event.preventDefault();
+
+    const pos = this.getPointerPos(event);
     const handle = this.hitTestHandle(pos);
 
     if (handle) {
@@ -156,9 +176,11 @@ export class ImageCropperComponent implements AfterViewInit, OnChanges {
     this.rectStart = { ...this.rect };
   }
 
-  onMouseMove(event: MouseEvent) {
+  onPointerMove(event: MouseEvent | TouchEvent) {
     if (!this.dragMode) return;
-    const pos = this.getMousePos(event);
+    if ('touches' in event) event.preventDefault();
+
+    const pos = this.getPointerPos(event);
     const dx = (pos.x - this.dragStart.x) / this.displayScale;
     const dy = (pos.y - this.dragStart.y) / this.displayScale;
 
@@ -173,7 +195,7 @@ export class ImageCropperComponent implements AfterViewInit, OnChanges {
     this.emitCrop();
   }
 
-  onMouseUp() {
+  onPointerUp() {
     this.dragMode = null;
     this.resizeHandle = null;
   }

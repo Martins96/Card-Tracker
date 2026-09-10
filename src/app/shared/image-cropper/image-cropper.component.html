@@ -1,7 +1,11 @@
 <canvas
   #canvas
-  (mousedown)="onMouseDown($event)"
-  (mousemove)="onMouseMove($event)"
-  (mouseup)="onMouseUp()"
-  (mouseleave)="onMouseUp()"
+  (mousedown)="onPointerDown($event)"
+  (mousemove)="onPointerMove($event)"
+  (mouseup)="onPointerUp()"
+  (mouseleave)="onPointerUp()"
+  (touchstart)="onPointerDown($event)"
+  (touchmove)="onPointerMove($event)"
+  (touchend)="onPointerUp()"
+  (touchcancel)="onPointerUp()"
 ></canvas>

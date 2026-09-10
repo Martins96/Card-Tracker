@@ -1,36 +1,141 @@
+@use '../../style/variables.scss' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  @include page-background;
+}
+
 .home-container {
-  max-width: 600px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem 1.5rem 5rem;
   text-align: center;
+  @include fade-in;
+}
+
+.app-logo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  border-radius: $radius-2xl;
+  background: $accent-gradient;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: $shadow-accent-btn;
+
+  .icon { font-size: 1.75rem; }
+}
+
+h1 {
+  color: $text-primary;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: $text-muted;
+  font-size: 0.9rem;
+  margin: 0 0 2rem;
 }
 
 .home-nav {
   display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  margin-top: 2rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.875rem;
 }
 
 .nav-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 2rem;
-  min-width: 180px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: $radius-2xl;
   text-decoration: none;
-  color: inherit;
-  transition: transform 0.15s, box-shadow 0.15s;
+  border: 1px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  backdrop-filter: blur(8px);
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  &:active {
+    transform: scale(0.97);
   }
 
-  .icon { font-size: 2.5rem; }
-  .label { font-weight: 600; }
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-card-hover;
+    }
+  }
+
+  .nav-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: $radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+  }
+
+  .nav-text {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .label {
+    color: $text-primary;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .sublabel {
+    color: $text-hint;
+    font-size: 0.78rem;
+  }
+
+  .chevron {
+    color: $text-faint;
+    font-size: 1.5rem;
+    font-weight: 300;
+  }
+
+  &--purple {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(37, 99, 235, 0.08));
+    border-color: $accent-border-soft;
+    .nav-icon { background: $accent-bg-softer; }
+    &:hover { border-color: $accent-border-mid; }
+  }
+
+  &--blue {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(6, 182, 212, 0.08));
+    border-color: rgba(37, 99, 235, 0.3);
+    .nav-icon { background: rgba(37, 99, 235, 0.25); }
+    &:hover { border-color: rgba(37, 99, 235, 0.6); }
+  }
+
+  &--cyan {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(16, 185, 129, 0.08));
+    border-color: rgba(6, 182, 212, 0.3);
+    .nav-icon { background: rgba(6, 182, 212, 0.25); }
+    &:hover { border-color: rgba(6, 182, 212, 0.6); }
+  }
+}
+
+.version-tag {
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  color: #52525b;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  opacity: 0.6;
+  white-space: nowrap;
 }

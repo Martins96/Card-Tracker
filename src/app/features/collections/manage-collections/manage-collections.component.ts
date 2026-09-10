@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CollectionsService } from '../../../core/service/collections.service';
-import { CardCollection } from '../../../core/model/card-collection.model';
+import { CardCollection, CollectionType } from '../../../core/model/card-collection.model';
 
 @Component({
   selector: 'app-manage-collections',
@@ -18,7 +18,12 @@ export class ManageCollectionsComponent {
   loading = signal(true);
   message = signal<string | null>(null);
 
+  // Espone l'enum al template per la <select>
+  readonly CollectionType = CollectionType;
+  readonly collectionTypes = Object.values(CollectionType);
+
   newName = signal('');
+  newType = signal<CollectionType>(CollectionType.CARTE);
 
   // id della collezione attualmente in modifica (null = nessuna)
   editingId = signal<string | null>(null);
@@ -46,11 +51,12 @@ export class ManageCollectionsComponent {
 
     this.message.set(null);
     try {
-      const created = await this.collectionsService.create(name);
+      const created = await this.collectionsService.create(name, this.newType());
       this.collections.update(list =>
         [...list, created].sort((a, b) => a.name.localeCompare(b.name))
       );
       this.newName.set('');
+      this.newType.set(CollectionType.CARTE);
     } catch (err) {
       this.message.set('Errore durante la creazione. Nome già esistente?');
       console.error(err);
@@ -100,5 +106,10 @@ export class ManageCollectionsComponent {
       this.message.set('Errore durante l\'eliminazione.');
       console.error(err);
     }
+  }
+
+  /** Etichetta leggibile per il tipo, usata nel template */
+  typeLabel(type: CollectionType): string {
+    return type === CollectionType.CARTE ? 'Carte' : 'Chibi';
   }
 }

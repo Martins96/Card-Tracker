@@ -1,11 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseClientService } from './supabase-client.service';
+import { firstValueFrom } from 'rxjs';
+import { HttpClient, HttpContext } from '@angular/common/http';
+import { withCache } from '@ngneat/cashew';
 
 const BUCKET = 'card-images';
 
 @Injectable({ providedIn: 'root' })
 export class CardImagesService {
+  private http = inject(HttpClient);
   private supabase = inject(SupabaseClientService).client;
+
+  private objectUrls = new Map<string, string>();
 
   getPublicUrl(cardId: string): string {
     const { data } = this.supabase.storage
@@ -13,6 +19,29 @@ export class CardImagesService {
       .getPublicUrl(`${cardId}.jpg`);
 
     return data.publicUrl;
+  }
+
+  async getCachedUrl(cardId: string): Promise<string> {
+    const publicUrl = this.getPublicUrl(cardId);
+ 
+    try {
+      const blob = await firstValueFrom(
+        this.http.get(publicUrl, {
+          responseType: 'blob',
+          context: withCache(), // usa il TTL configurato in app.config.ts
+        })
+      );
+ 
+      const previous = this.objectUrls.get(cardId);
+      if (previous) URL.revokeObjectURL(previous);
+ 
+      const blobUrl = URL.createObjectURL(blob);
+      this.objectUrls.set(cardId, blobUrl);
+      return blobUrl;
+    } catch (err) {
+      console.warn(`Caricamento immagine fallito per la carta ${cardId}, uso url diretto:`, err);
+      return publicUrl;
+    }
   }
 
   async upload(cardId: string, file: Blob): Promise<void> {
