@@ -1,4 +1,6 @@
+import { version } from '../../package.json';
+
 export const environmentBase = {
-  appVersion: '1.1.1-dev',
+  appVersion: version,
   appName: 'card-tracker'
 };
