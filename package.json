@@ -2,9 +2,10 @@
   "name": "card-tracker",
   "version": "1.1.1",
   "scripts": {
+    "config-env": "node set-env.js",
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run config-env && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

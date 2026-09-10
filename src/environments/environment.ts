@@ -1,5 +1,7 @@
+import { environmentBase } from './environment.base';
+
 export const environment = {
-  appVersion: '1.1.1',
+  ...environmentBase,
 
   production: false,
   supabaseUrl: '',
