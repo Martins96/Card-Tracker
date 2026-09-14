@@ -25,7 +25,7 @@ export class ManageCollectionsComponent {
   newName = signal('');
   newType = signal<CollectionType>(CollectionType.CARTE);
 
-  // id della collezione attualmente in modifica (null = nessuna)
+  // id della collezione attualmente in modifica del nome (null = nessuna)
   editingId = signal<string | null>(null);
   editingName = signal('');
 
@@ -88,6 +88,22 @@ export class ManageCollectionsComponent {
       this.cancelEdit();
     } catch (err) {
       this.message.set('Errore durante la rinomina. Nome già esistente?');
+      console.error(err);
+    }
+  }
+
+  /** Cambio tipo indipendente dalla rinomina: salva subito, senza modalità di editing */
+  async onTypeChange(collection: CardCollection, type: CollectionType) {
+    if (type === collection.type) return;
+
+    this.message.set(null);
+    try {
+      const updated = await this.collectionsService.changeType(collection.id, type);
+      this.collections.update(list =>
+        list.map(c => (c.id === collection.id ? updated : c))
+      );
+    } catch (err) {
+      this.message.set('Errore durante il cambio tipo.');
       console.error(err);
     }
   }

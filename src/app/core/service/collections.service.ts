@@ -49,10 +49,24 @@ export class CollectionsService {
     if (error) throw error;
   }
 
+  /** Aggiorna solo il nome */
   async rename(id: string, name: string): Promise<CardCollection> {
     const { data, error } = await this.supabase
       .from('collections')
       .update({ name })
+      .eq('id', id)
+      .select('id, name, type')
+      .single();
+
+    if (error) throw error;
+    return data as CardCollection;
+  }
+
+  /** Aggiorna solo il tipo */
+  async changeType(id: string, type: CollectionType): Promise<CardCollection> {
+    const { data, error } = await this.supabase
+      .from('collections')
+      .update({ type })
       .eq('id', id)
       .select('id, name, type')
       .single();

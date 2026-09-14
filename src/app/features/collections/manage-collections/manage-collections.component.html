@@ -29,27 +29,41 @@
     <ul class="collection-list">
       @for (collection of collections(); track collection.id) {
         <li class="collection-item" [class.editing]="editingId() === collection.id">
-          @if (editingId() === collection.id) {
-            <input
-              type="text"
-              [(ngModel)]="editingName"
-              name="editingName"
-              class="edit-input"
-            />
-            <div class="actions">
+          <div class="row row-main">
+            @if (editingId() === collection.id) {
+              <input
+                type="text"
+                [(ngModel)]="editingName"
+                name="editingName"
+                class="edit-input"
+              />
+            } @else {
+              <span class="name">{{ collection.name }}</span>
+            }
+
+            <!-- Tipo: controllo indipendente, salva subito al cambio -->
+            <select
+              class="type-select"
+              [class.gioco]="collection.type === CollectionType.CARTE"
+              [ngModel]="collection.type"
+              [name]="'type-' + collection.id"
+              (ngModelChange)="onTypeChange(collection, $event)"
+            >
+              @for (t of collectionTypes; track t) {
+                <option [value]="t">{{ typeLabel(t) }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="row row-actions">
+            @if (editingId() === collection.id) {
               <button type="button" class="confirm" (click)="confirmEdit()">Salva</button>
               <button type="button" class="secondary" (click)="cancelEdit()">Annulla</button>
-            </div>
-          } @else {
-            <span class="name">{{ collection.name }}</span>
-            <span class="type-tag" [class.gioco]="collection.type === CollectionType.CARTE">
-              {{ typeLabel(collection.type) }}
-            </span>
-            <div class="actions">
+            } @else {
               <button type="button" class="secondary" (click)="startEdit(collection)">Rinomina</button>
               <button type="button" class="danger" (click)="onDelete(collection)">Elimina</button>
-            </div>
-          }
+            }
+          </div>
         </li>
       }
     </ul>

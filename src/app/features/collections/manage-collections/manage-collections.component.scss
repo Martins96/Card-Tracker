@@ -35,13 +35,15 @@ h2 {
 
 .create-form {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin: 0 0 1.5rem;
 
   input {
-    flex: 1;
+    flex: 1 1 160px;
+    min-width: 0;
     padding: 12px 14px;
-    border-radius: 12px;
+    border-radius: $radius-lg;
     border: 1px solid $border-input;
     background: $bg-input;
     color: $text-primary;
@@ -54,8 +56,9 @@ h2 {
   }
 
   select {
+    flex: 0 0 auto;
     padding: 12px 14px;
-    border-radius: 12px;
+    border-radius: $radius-lg;
     border: 1px solid $border-input;
     background: $bg-input;
     color: $text-primary;
@@ -68,23 +71,34 @@ h2 {
   }
 
   button {
-    background: linear-gradient(135deg, $accent-purple, $accent-blue);
+    flex: 0 0 auto;
+    background: $accent-gradient;
     color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: $radius-lg;
     padding: 0 20px;
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    box-shadow: $shadow-accent-btn;
     transition: transform 0.1s;
 
     &:active { transform: scale(0.96); }
   }
+
+  // Su schermi molto stretti impiliamo tutto per evitare campi schiacciati
+  @media (max-width: 420px) {
+    flex-direction: column;
+
+    input, select, button {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+  }
 }
 
 .status {
-  color: #9ca3af;
+  color: $text-muted;
   font-size: 0.9rem;
 
   &.error { color: $color-danger-light; }
@@ -99,60 +113,95 @@ h2 {
   gap: 10px;
 }
 
+// Riquadro collezione: 2 righe reali (titolo/tipo + azioni)
 .collection-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 10px;
   padding: 14px 16px;
   background: $bg-card;
   border: 1px solid $border-default;
-  border-radius: 14px;
+  border-radius: $radius-xl;
   transition: border-color 0.15s, background 0.15s;
 
-  .name {
-    color: $text-primary;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-
   &.editing {
-    background: rgba(124, 58, 237, 0.1);
-    border-color: rgba(124, 58, 237, 0.4);
-  }
-
-  .edit-input {
-    flex: 1;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid #3f3f4a;
-    background: #0a0a0f;
-    color: $text-primary;
-    font-size: 0.9rem;
-    outline: none;
-
-    &:focus { border-color: $accent-purple; }
+    background: $accent-bg-soft;
+    border-color: $accent-border-mid;
   }
 }
 
-.type-tag {
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0; // fondamentale: permette all'ellissi del nome di funzionare dentro il flex
+}
+
+.row-main {
+  .name {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: $text-primary;
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.row-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.edit-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: $radius-sm;
+  border: 1px solid $border-strong;
+  background: $bg-input-dark;
+  color: $text-primary;
+  font-size: 0.9rem;
+  outline: none;
+
+  &:focus { border-color: $accent-purple; }
+}
+
+// Select del tipo: sempre visibile e cliccabile, indipendente dalla rinomina.
+// Stessa "pill" del vecchio type-tag, ma interattiva.
+.type-select {
+  flex: 0 0 auto;
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 999px;
+  padding: 3px 6px;
+  border-radius: $radius-pill;
   background: rgba(59, 130, 246, 0.15);
   color: $accent-blue;
   border: 1px solid rgba(59, 130, 246, 0.3);
   white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
 
   &.gioco {
-    background: rgba(124, 58, 237, 0.15);
+    background: $accent-bg-softer;
     color: $accent-purple;
-    border-color: rgba(124, 58, 237, 0.3);
+    border-color: $accent-border-soft;
+  }
+
+  &:hover { border-color: $accent-purple-light; }
+  &:focus { border-color: $accent-purple; }
+
+  option {
+    background: $bg-card;
+    color: $text-primary;
   }
 }
 
-.actions {
+.actions,
+.row-actions {
   display: flex;
   gap: 6px;
   flex-shrink: 0;
@@ -160,7 +209,7 @@ h2 {
 
 button {
   padding: 7px 12px;
-  border-radius: 8px;
+  border-radius: $radius-sm;
   border: none;
   font-size: 0.78rem;
   font-weight: 600;
@@ -176,9 +225,9 @@ button {
   }
 
   &.danger {
-    background: rgba(239, 68, 68, 0.15);
+    background: $color-danger-bg;
     color: $color-danger-light;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    border: 1px solid $color-danger-border;
     &:hover { background: rgba(239, 68, 68, 0.25); }
   }
 
@@ -186,6 +235,13 @@ button {
     background: $color-success;
     color: white;
     &:hover { background: #059669; }
+  }
+}
+
+// Su mobile i bottoni occupano tutta la larghezza disponibile in modo equo
+@media (max-width: 380px) {
+  .row-actions button {
+    flex: 1 1 0;
   }
 }
 
