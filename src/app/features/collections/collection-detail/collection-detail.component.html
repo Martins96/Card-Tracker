@@ -35,7 +35,11 @@
       } @else {
         <div class="cards-grid">
           @for (card of filteredCards(); track card.id) {
-            <div class="card-tile" [class.zero]="card.quantity === 0" (click)="openEdit(card)">
+            <div class="card-tile" [class.zero]="card.quantity === 0" 
+                (click)="openEdit(card)"
+                (keyup.enter)="openEdit(card)" 
+                tabindex="0" 
+                role="button">
               <div class="img-wrapper">
                 <img
                   [src]="card.imageUrl"
@@ -55,8 +59,8 @@
   }
 
   @if (editingCard(); as card) {
-    <div class="edit-overlay" (click)="closeEdit()">
-      <div class="edit-modal" (click)="$event.stopPropagation()">
+    <div class="edit-overlay" (click)="closeEdit()" (keyup.enter)="closeEdit()" tabindex="1" role="button">
+      <div class="edit-modal" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()" tabindex="2" role="button">
         <img [src]="card.imageUrl" alt="Carta" class="edit-preview" />
 
         <div class="quantity-editor">

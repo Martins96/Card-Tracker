@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseClientService } from './supabase-client.service';
 import { firstValueFrom } from 'rxjs';
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { withCache } from '@ngneat/cashew';
 
 const BUCKET = 'card-images';

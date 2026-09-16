@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CollectionsService } from '../../../core/service/collections.service';
-import { CardCollection, CollectionType } from '../../../core/model/card-collection.model';
+import { CardCollection } from '../../../core/model/card-collection.model';
 import { sortByName, typeLabel } from '../../../shared/utils/collection.utils';
 import { CollectionCreateFormComponent, CreateCollectionEvent } from './collection-create-form/collection-create-form.component';
 import { CollectionListItemComponent, RenameEvent, TypeChangeEvent } from './collection-list-item/collection-list-item.component';

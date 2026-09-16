@@ -49,7 +49,7 @@
           required
           class="visually-hidden"
         />
-        <div class="dropzone" (click)="fileInput.click()">
+        <div class="dropzone" (click)="fileInput.click()" (keyup.enter)="fileInput.click()" tabindex="0" role="button">
           <span class="dropzone-icon">↑</span>
           <span class="dropzone-title">Scatta o carica una foto</span>
           <span class="dropzone-hint">JPG, PNG fino a 10MB</span>

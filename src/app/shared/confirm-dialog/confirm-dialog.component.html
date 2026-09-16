@@ -1,6 +1,14 @@
 @if (visible()) {
-  <div class="overlay" (click)="cancel()">
-    <div class="dialog" (click)="$event.stopPropagation()">
+  <div class="overlay" 
+      (click)="cancel()"
+      (keyup.enter)="cancel()" 
+      tabindex="0" 
+      role="button">
+    <div class="dialog" 
+        (click)="$event.stopPropagation()"
+        (keyup.enter)="$event.stopPropagation()" 
+        tabindex="0" 
+        role="button">
       <h3>{{ title() }}</h3>
       <p>{{ message() }}</p>
       <div class="buttons">

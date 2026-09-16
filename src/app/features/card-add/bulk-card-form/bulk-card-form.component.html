@@ -24,7 +24,7 @@
           (change)="onFileSelected($event)"
           class="visually-hidden"
         />
-        <div class="dropzone" (click)="sheetInput.click()">
+        <div class="dropzone" (click)="sheetInput.click()" (keyup.enter)="sheetInput.click()" tabindex="0" role="button">
           <span class="dropzone-icon">↑</span>
           <span class="dropzone-title">Scatta o carica il foglio</span>
           <span class="dropzone-hint">Tutte le carte in una sola foto</span>
