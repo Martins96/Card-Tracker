@@ -4,9 +4,11 @@ on:
   push:
     branches: [master]
 
-jobs:
   checks:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_ANON_KEY: "test"
+      SUPABASE_URL: "https://test.supabase.co"
     steps:
       - uses: actions/checkout@v4
 
