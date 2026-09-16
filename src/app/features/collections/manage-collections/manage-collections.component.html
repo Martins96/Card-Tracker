@@ -2,20 +2,10 @@
   <a routerLink="/" class="back-link">← Home</a>
   <h2>Gestisci collezioni</h2>
 
-  <form (ngSubmit)="onCreate()" class="create-form">
-    <input
-      type="text"
-      [(ngModel)]="newName"
-      name="newName"
-      placeholder="Nome nuova collezione (es. Melting Point Summer 2026)"
-    />
-    <select [(ngModel)]="newType" name="newType">
-      @for (t of collectionTypes; track t) {
-        <option [value]="t">{{ typeLabel(t) }}</option>
-      }
-    </select>
-    <button type="submit">Crea</button>
-  </form>
+  <app-collection-create-form
+    #createForm
+    (create)="onCreate($event, createForm)"
+  />
 
   @if (message()) {
     <p class="status error">{{ message() }}</p>
@@ -28,46 +18,15 @@
   } @else {
     <ul class="collection-list">
       @for (collection of collections(); track collection.id) {
-        <li class="collection-item" [class.editing]="editingId() === collection.id">
-          <div class="row row-main">
-            @if (editingId() === collection.id) {
-              <input
-                type="text"
-                [(ngModel)]="editingName"
-                name="editingName"
-                class="edit-input"
-              />
-            } @else {
-              <span class="name">{{ collection.name }}</span>
-            }
-          </div>
-
-          <div class="row row-actions">
-            <!-- Tipo: controllo indipendente, a sinistra; chiede conferma prima di salvare -->
-            <select
-              class="type-select"
-              [class.gioco]="collection.type === CollectionType.CARTE"
-              [ngModel]="collection.type"
-              [name]="'type-' + collection.id"
-              (ngModelChange)="onTypeChange(collection, $event)"
-            >
-              @for (t of collectionTypes; track t) {
-                <option [value]="t">{{ typeLabel(t) }}</option>
-              }
-            </select>
-
-            <div class="buttons">
-              @if (editingId() === collection.id) {
-                <button type="button" class="confirm" (click)="confirmEdit()">Salva</button>
-                <button type="button" class="secondary" (click)="cancelEdit()">Annulla</button>
-              } @else {
-                <button type="button" class="secondary" (click)="startEdit(collection)">Rinomina</button>
-                <button type="button" class="danger" (click)="onDelete(collection)">Elimina</button>
-              }
-            </div>
-          </div>
-        </li>
+        <app-collection-list-item
+          [collection]="collection"
+          (rename)="onRename($event)"
+          (typeChange)="onTypeChange($event, confirmDialog)"
+          (deleteRequest)="onDeleteRequest($event, confirmDialog)"
+        />
       }
     </ul>
   }
 </div>
+
+<app-confirm-dialog #confirmDialog />

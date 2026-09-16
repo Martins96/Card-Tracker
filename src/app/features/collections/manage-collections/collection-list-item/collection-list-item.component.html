@@ -1,0 +1,39 @@
+<li class="collection-item" [class.editing]="editing()">
+  <div class="row row-main">
+    @if (editing()) {
+      <input
+        type="text"
+        [(ngModel)]="editingName"
+        name="editingName"
+        class="edit-input"
+      />
+    } @else {
+      <span class="name">{{ collection.name }}</span>
+    }
+  </div>
+
+  <div class="row row-actions">
+    <!-- Tipo: controllo indipendente, a sinistra; chiede conferma prima di salvare -->
+    <select
+      class="type-select"
+      [class.gioco]="collection.type === CollectionType.CARTE"
+      [ngModel]="collection.type"
+      name="type"
+      (ngModelChange)="onTypeSelectChange($event)"
+    >
+      @for (t of collectionTypes; track t) {
+        <option [value]="t">{{ typeLabel(t) }}</option>
+      }
+    </select>
+
+    <div class="buttons">
+      @if (editing()) {
+        <button type="button" class="confirm" (click)="confirmEdit()">Salva</button>
+        <button type="button" class="secondary" (click)="cancelEdit()">Annulla</button>
+      } @else {
+        <button type="button" class="secondary" (click)="startEdit()">Rinomina</button>
+        <button type="button" class="danger" (click)="onDeleteClick()">Elimina</button>
+      }
+    </div>
+  </div>
+</li>

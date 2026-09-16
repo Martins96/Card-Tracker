@@ -2,6 +2,12 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
 
+## Status
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a04b443e-4a39-4c5b-b912-3fa2561b01c6/deploy-status)](https://app.netlify.com/)
+
+
+
 ## Project information
 
 Card Tracker is a site where you can store the information about your card collections.

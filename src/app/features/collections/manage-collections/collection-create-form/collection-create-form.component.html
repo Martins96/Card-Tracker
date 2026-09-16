@@ -1,0 +1,14 @@
+<form (ngSubmit)="onSubmit()" class="create-form">
+  <input
+    type="text"
+    [(ngModel)]="name"
+    name="newName"
+    placeholder="Nome nuova collezione (es. Melting Point Summer 2026)"
+  />
+  <select [(ngModel)]="type" name="newType">
+    @for (t of collectionTypes; track t) {
+      <option [value]="t">{{ typeLabel(t) }}</option>
+    }
+  </select>
+  <button type="submit">Crea</button>
+</form>

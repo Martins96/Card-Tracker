@@ -1,13 +1,30 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { CollectionsService } from '../../../core/service/collections.service';
 import { CardCollection, CollectionType } from '../../../core/model/card-collection.model';
+import { sortByName, typeLabel } from '../../../shared/utils/collection.utils';
+import { CollectionCreateFormComponent, CreateCollectionEvent } from './collection-create-form/collection-create-form.component';
+import { CollectionListItemComponent, RenameEvent, TypeChangeEvent } from './collection-list-item/collection-list-item.component';
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
+/**
+ * Pagina di gestione collezioni.
+ *
+ * Fa da "contenitore": tiene lo stato (lista collezioni, loading, messaggi
+ * di errore) e resta l'unico punto che parla con CollectionsService.
+ * I due sotto-componenti (form di creazione e riga della lista) sono
+ * "dumb": ricevono dati via @Input ed emettono eventi via @Output,
+ * senza conoscere il service.
+ */
 @Component({
   selector: 'app-manage-collections',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [
+    RouterLink,
+    CollectionCreateFormComponent,
+    CollectionListItemComponent,
+    ConfirmDialogComponent,
+  ],
   templateUrl: './manage-collections.component.html',
   styleUrl: './manage-collections.component.scss',
 })
@@ -18,16 +35,7 @@ export class ManageCollectionsComponent {
   loading = signal(true);
   message = signal<string | null>(null);
 
-  // Espone l'enum al template per la <select>
-  readonly CollectionType = CollectionType;
-  readonly collectionTypes = Object.values(CollectionType);
-
-  newName = signal('');
-  newType = signal<CollectionType>(CollectionType.CARTE);
-
-  // id della collezione attualmente in modifica del nome (null = nessuna)
-  editingId = signal<string | null>(null);
-  editingName = signal('');
+  readonly typeLabel = typeLabel;
 
   constructor() {
     this.loadCollections();
@@ -36,7 +44,7 @@ export class ManageCollectionsComponent {
   private async loadCollections() {
     this.loading.set(true);
     try {
-      this.collections.set(await this.collectionsService.getAll());
+      this.collections.set(sortByName(await this.collectionsService.getAll()));
     } catch (err) {
       this.message.set('Errore nel caricamento delle collezioni.');
       console.error(err);
@@ -45,76 +53,54 @@ export class ManageCollectionsComponent {
     }
   }
 
-  async onCreate() {
-    const name = this.newName().trim();
-    if (!name) return;
-
+  async onCreate(event: CreateCollectionEvent, form: CollectionCreateFormComponent) {
     this.message.set(null);
     try {
-      const created = await this.collectionsService.create(name, this.newType());
-      this.collections.update(list =>
-        [...list, created].sort((a, b) => a.name.localeCompare(b.name))
-      );
-      this.newName.set('');
-      this.newType.set(CollectionType.CARTE);
+      const created = await this.collectionsService.create(event.name, event.type);
+      this.collections.update(list => sortByName([...list, created]));
+      form.reset();
     } catch (err) {
       this.message.set('Errore durante la creazione. Nome già esistente?');
       console.error(err);
     }
   }
 
-  startEdit(collection: CardCollection) {
-    this.editingId.set(collection.id);
-    this.editingName.set(collection.name);
-  }
-
-  cancelEdit() {
-    this.editingId.set(null);
-    this.editingName.set('');
-  }
-
-  async confirmEdit() {
-    const id = this.editingId();
-    const name = this.editingName().trim();
-    if (!id || !name) return;
-
+  async onRename(event: RenameEvent) {
     this.message.set(null);
     try {
-      const updated = await this.collectionsService.rename(id, name);
+      const updated = await this.collectionsService.rename(event.collection.id, event.newName);
       this.collections.update(list =>
-        list.map(c => (c.id === id ? updated : c))
-             .sort((a, b) => a.name.localeCompare(b.name))
+        sortByName(list.map(c => (c.id === updated.id ? updated : c)))
       );
-      this.cancelEdit();
     } catch (err) {
       this.message.set('Errore durante la rinomina. Nome già esistente?');
       console.error(err);
     }
   }
 
-  /** Cambio tipo indipendente dalla rinomina: chiede conferma, poi salva subito */
-  async onTypeChange(collection: CardCollection, type: CollectionType) {
-    if (type === collection.type) return;
+  /** Il cambio tipo chiede sempre conferma prima di essere inviato al service */
+  async onTypeChange(event: TypeChangeEvent, confirmDialog: ConfirmDialogComponent) {
+    const { collection, newType } = event;
 
-    const confirmed = confirm(
-      `Cambiare il tipo di "${collection.name}" da ${this.typeLabel(collection.type)} a ${this.typeLabel(type)}?`
+    const confirmed = await confirmDialog.ask(
+      'Cambia tipo',
+      `Cambiare il tipo di "${collection.name}" da ${this.typeLabel(collection.type)} a ${this.typeLabel(newType)}?`
     );
-    if (!confirmed) return;
+    if (!confirmed) return; // la select torna al valore reale da sola (binding [ngModel])
 
     this.message.set(null);
     try {
-      const updated = await this.collectionsService.changeType(collection.id, type);
-      this.collections.update(list =>
-        list.map(c => (c.id === collection.id ? updated : c))
-      );
+      const updated = await this.collectionsService.changeType(collection.id, newType);
+      this.collections.update(list => list.map(c => (c.id === updated.id ? updated : c)));
     } catch (err) {
       this.message.set('Errore durante il cambio tipo.');
       console.error(err);
     }
   }
 
-  async onDelete(collection: CardCollection) {
-    const confirmed = confirm(
+  async onDeleteRequest(collection: CardCollection, confirmDialog: ConfirmDialogComponent) {
+    const confirmed = await confirmDialog.ask(
+      'Elimina collezione',
       `Eliminare "${collection.name}"? Verranno eliminate anche tutte le carte associate.`
     );
     if (!confirmed) return;
@@ -124,13 +110,8 @@ export class ManageCollectionsComponent {
       await this.collectionsService.delete(collection.id);
       this.collections.update(list => list.filter(c => c.id !== collection.id));
     } catch (err) {
-      this.message.set('Errore durante l\'eliminazione.');
+      this.message.set("Errore durante l'eliminazione.");
       console.error(err);
     }
-  }
-
-  /** Etichetta leggibile per il tipo, usata nel template */
-  typeLabel(type: CollectionType): string {
-    return type === CollectionType.CARTE ? 'Carte' : 'Chibi';
   }
 }

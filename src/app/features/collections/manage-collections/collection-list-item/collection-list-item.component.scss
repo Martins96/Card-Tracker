@@ -1,0 +1,140 @@
+@use '../../../../style/variables.scss' as *;
+
+// Riquadro collezione: 2 righe reali (titolo/tipo + azioni)
+.collection-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background: $bg-card;
+  border: 1px solid $border-default;
+  border-radius: $radius-xl;
+  transition: border-color 0.15s, background 0.15s;
+
+  &.editing {
+    background: $accent-bg-soft;
+    border-color: $accent-border-mid;
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0; // fondamentale: permette all'ellissi del nome di funzionare dentro il flex
+}
+
+.row-main {
+  .name {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: $text-primary;
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.row-actions {
+  flex-wrap: wrap;
+  justify-content: space-between; // select a sinistra, bottoni a destra
+}
+
+.buttons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto; // in caso di wrap, resta comunque allineata a destra
+}
+
+.edit-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: $radius-sm;
+  border: 1px solid $border-strong;
+  background: $bg-input-dark;
+  color: $text-primary;
+  font-size: 0.9rem;
+  outline: none;
+
+  &:focus { border-color: $accent-purple; }
+}
+
+.type-select {
+  flex: 0 0 auto;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: $radius-pill;
+  background: rgba(59, 130, 246, 0.15);
+  color: $accent-blue;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+
+  &.gioco {
+    background: $accent-bg-softer;
+    color: $accent-purple;
+    border-color: $accent-border-soft;
+  }
+
+  &:hover { border-color: $accent-purple-light; }
+  &:focus { border-color: $accent-purple; }
+
+  option {
+    background: $bg-card;
+    color: $text-primary;
+  }
+}
+
+button {
+  padding: 7px 12px;
+  border-radius: $radius-sm;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.15s;
+
+  &:active { transform: scale(0.94); }
+
+  &.secondary {
+    background: $border-default;
+    color: $text-secondary;
+    &:hover { background: #2c2c38; }
+  }
+
+  &.danger {
+    background: $color-danger-bg;
+    color: $color-danger-light;
+    border: 1px solid $color-danger-border;
+    &:hover { background: rgba(239, 68, 68, 0.25); }
+  }
+
+  &.confirm {
+    background: $color-success;
+    color: white;
+    &:hover { background: #059669; }
+  }
+}
+
+// Su schermi molto stretti impiliamo select e bottoni, che diventano equi
+@media (max-width: 380px) {
+  .row-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .buttons {
+    margin-left: 0;
+
+    button {
+      flex: 1 1 0;
+    }
+  }
+}

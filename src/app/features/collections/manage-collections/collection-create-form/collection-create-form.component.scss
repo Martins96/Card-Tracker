@@ -1,0 +1,65 @@
+@use '../../../../style/variables.scss' as *;
+
+.create-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 1.5rem;
+
+  input {
+    flex: 1 1 160px;
+    min-width: 0;
+    padding: 12px 14px;
+    border-radius: $radius-lg;
+    border: 1px solid $border-input;
+    background: $bg-input;
+    color: $text-primary;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &::placeholder { color: $text-placeholder; }
+    &:focus { border-color: $accent-purple; }
+  }
+
+  select {
+    flex: 0 0 auto;
+    padding: 12px 14px;
+    border-radius: $radius-lg;
+    border: 1px solid $border-input;
+    background: $bg-input;
+    color: $text-primary;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+
+    &:focus { border-color: $accent-purple; }
+  }
+
+  button {
+    flex: 0 0 auto;
+    background: $accent-gradient;
+    color: white;
+    border: none;
+    border-radius: $radius-lg;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: $shadow-accent-btn;
+    transition: transform 0.1s;
+
+    &:active { transform: scale(0.96); }
+  }
+
+  // Su schermi molto stretti impiliamo tutto per evitare campi schiacciati
+  @media (max-width: 420px) {
+    flex-direction: column;
+
+    input, select, button {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+  }
+}
