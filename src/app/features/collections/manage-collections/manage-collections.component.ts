@@ -92,9 +92,14 @@ export class ManageCollectionsComponent {
     }
   }
 
-  /** Cambio tipo indipendente dalla rinomina: salva subito, senza modalità di editing */
+  /** Cambio tipo indipendente dalla rinomina: chiede conferma, poi salva subito */
   async onTypeChange(collection: CardCollection, type: CollectionType) {
     if (type === collection.type) return;
+
+    const confirmed = confirm(
+      `Cambiare il tipo di "${collection.name}" da ${this.typeLabel(collection.type)} a ${this.typeLabel(type)}?`
+    );
+    if (!confirmed) return;
 
     this.message.set(null);
     try {

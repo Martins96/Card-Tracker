@@ -40,8 +40,10 @@
             } @else {
               <span class="name">{{ collection.name }}</span>
             }
+          </div>
 
-            <!-- Tipo: controllo indipendente, salva subito al cambio -->
+          <div class="row row-actions">
+            <!-- Tipo: controllo indipendente, a sinistra; chiede conferma prima di salvare -->
             <select
               class="type-select"
               [class.gioco]="collection.type === CollectionType.CARTE"
@@ -53,16 +55,16 @@
                 <option [value]="t">{{ typeLabel(t) }}</option>
               }
             </select>
-          </div>
 
-          <div class="row row-actions">
-            @if (editingId() === collection.id) {
-              <button type="button" class="confirm" (click)="confirmEdit()">Salva</button>
-              <button type="button" class="secondary" (click)="cancelEdit()">Annulla</button>
-            } @else {
-              <button type="button" class="secondary" (click)="startEdit(collection)">Rinomina</button>
-              <button type="button" class="danger" (click)="onDelete(collection)">Elimina</button>
-            }
+            <div class="buttons">
+              @if (editingId() === collection.id) {
+                <button type="button" class="confirm" (click)="confirmEdit()">Salva</button>
+                <button type="button" class="secondary" (click)="cancelEdit()">Annulla</button>
+              } @else {
+                <button type="button" class="secondary" (click)="startEdit(collection)">Rinomina</button>
+                <button type="button" class="danger" (click)="onDelete(collection)">Elimina</button>
+              }
+            </div>
           </div>
         </li>
       }

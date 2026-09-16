@@ -152,7 +152,14 @@ h2 {
 
 .row-actions {
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: space-between; // select a sinistra, bottoni a destra
+}
+
+.buttons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto; // in caso di wrap, resta comunque allineata a destra
 }
 
 .edit-input {
@@ -169,11 +176,9 @@ h2 {
   &:focus { border-color: $accent-purple; }
 }
 
-// Select del tipo: sempre visibile e cliccabile, indipendente dalla rinomina.
-// Stessa "pill" del vecchio type-tag, ma interattiva.
 .type-select {
   flex: 0 0 auto;
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   font-weight: 700;
   padding: 3px 6px;
   border-radius: $radius-pill;
@@ -238,10 +243,19 @@ button {
   }
 }
 
-// Su mobile i bottoni occupano tutta la larghezza disponibile in modo equo
+// Su schermi molto stretti impiliamo select e bottoni, che diventano equi
 @media (max-width: 380px) {
-  .row-actions button {
-    flex: 1 1 0;
+  .row-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .buttons {
+    margin-left: 0;
+
+    button {
+      flex: 1 1 0;
+    }
   }
 }
 
